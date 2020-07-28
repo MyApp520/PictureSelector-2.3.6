@@ -1,0 +1,21 @@
+ext {
+    cfgs = [
+            compileSdkVersion    : 27,
+            buildToolsVersion    : "27.0.3",
+            minSdkVersion        : 21,
+            targetSdkVersion     : 27,
+            versionCode          : 10,
+            versionName          : "2.0.0",
+            ucropVersionCode     : 22,
+            ucropVersionName     : "2.2.0-native",
+
+            //open version control
+            version_recyclerview : "27.1.1",
+            version_appcompat    : "27.1.1"
+    ]
+
+    dependencies = [
+            "eventbus" : "org.greenrobot:eventbus:3.0.0",
+            "permission" : "com.yanzhenjie.permission:support:2.0.1",
+    ]
+}

@@ -1,0 +1,55 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion cfgs.compileSdkVersion
+    buildToolsVersion cfgs.buildToolsVersion
+
+    defaultConfig {
+        minSdkVersion cfgs.minSdkVersion
+        targetSdkVersion cfgs.targetSdkVersion
+        versionCode cfgs.versionCode
+        versionName cfgs.versionName
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    configurations.all {
+        resolutionStrategy.eachDependency {
+            DependencyResolveDetails details ->
+                def requested = details.requested
+                if (requested.group == 'com.android.support') {
+                    if (!requested.name.startsWith("multidex")) {
+                        details.useVersion '27.1.1'
+                    }
+                }
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation project(':ucrop')
+
+    //noinspection GradleCompatible
+    implementation "com.android.support:appcompat-v7:${cfgs.version_appcompat}"
+    implementation "com.android.support:support-v4:${cfgs.version_appcompat}"
+    implementation "com.android.support:recyclerview-v7:${cfgs.version_recyclerview}"
+
+    implementation(rootProject.ext.dependencies["eventbus"]) {
+        exclude module: 'com.android.support'
+    }
+    implementation(rootProject.ext.dependencies["permission"]) {
+        exclude module: 'com.android.support'
+    }
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+}

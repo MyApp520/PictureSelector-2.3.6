@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <!--拍照-->
+    <RelativeLayout
+        android:id="@+id/rl_camera_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.eighteengray.procameralibrary.camera.Camera2TextureView
+            android:id="@+id/cameraTextureView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" />
+
+    </RelativeLayout>
+
+    <!--聚焦图标-->
+    <com.eighteengray.procameralibrary.widget.FocusView
+        android:id="@+id/focusview_camera2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
+
+    <!--拍照按钮-->
+    <ImageView
+        android:id="@+id/iv_take_picture"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/layer_capture_button" />
+
+</RelativeLayout>

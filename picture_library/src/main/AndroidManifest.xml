@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.luck.picture.lib">
+
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+
+    <application>
+
+        <provider
+            android:name=".PictureFileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+        <activity
+            android:name=".PictureSelectorActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+
+        <activity
+            android:name=".PictureCustomSelectorActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+
+        <activity
+            android:name=".PictureSelectorWeChatStyleActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+
+        <activity
+            android:name=".PictureSelectorCameraEmptyActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Picture.Theme.Translucent"
+            android:windowSoftInputMode="adjustPan" />
+
+        <activity
+            android:name=".PicturePreviewActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".PictureSelectorPreviewWeChatStyleActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".PictureVideoPlayActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="sensor" />
+
+        <activity android:name=".PictureExternalPreviewActivity" />
+
+        <activity
+            android:name="com.yalantis.ucrop.UCropActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Base.Theme.NoActionBar" />
+
+        <activity
+            android:name="com.yalantis.ucrop.PictureMultiCuttingActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Base.Theme.NoActionBar" />
+
+        <activity android:name=".PicturePlayAudioActivity" />
+
+        <activity
+            android:name="com.eighteengray.procameralibrary.activity.ProCustomCameraActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name="com.xhdz.customcamera.activity.XhCustomTextureViewCameraActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name="com.xhdz.customcamera.activity.XhCustomSurfaceViewCameraActivity"
+            android:screenOrientation="portrait" />
+    </application>
+
+</manifest>
