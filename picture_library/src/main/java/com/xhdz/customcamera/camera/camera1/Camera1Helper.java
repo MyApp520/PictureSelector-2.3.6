@@ -143,7 +143,7 @@ public class Camera1Helper {
                 setAutoFocusInternal(true);
                 // 设置拍照图片的方向
                 mCameraParameters.setRotation(calcCameraRotation(mDisplayOrientation));
-                // 设置预览界面的方向
+                // 设置预览界面的方向，在此之前，必须保证先调用了mCamera.setPreviewDisplay(mSurfaceHolder)方法，否则setDisplayOrientation是无效的
                 mCamera.setDisplayOrientation(calcDisplayOrientation(mDisplayOrientation));
 
                 // 设置相机参数
