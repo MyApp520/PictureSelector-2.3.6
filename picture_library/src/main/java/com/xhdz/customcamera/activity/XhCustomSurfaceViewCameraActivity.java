@@ -1,5 +1,6 @@
 package com.xhdz.customcamera.activity;
 
+import android.content.Intent;
 import android.hardware.Camera;
 import android.util.Log;
 import android.view.SurfaceHolder;
@@ -14,7 +15,10 @@ import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.R;
 import com.luck.picture.lib.entity.LocalMedia;
 import com.luck.picture.lib.tools.SdkVersionUtils;
+import com.luck.picture.lib.tools.ToastUtils;
 import com.xhdz.customcamera.camera.camera1.Camera1Helper;
+import com.yalantis.ucrop.UCrop;
+import com.yalantis.ucrop.UCropMulti;
 import com.yalantis.ucrop.model.CutInfo;
 
 import java.util.ArrayList;
@@ -138,6 +142,22 @@ public class XhCustomSurfaceViewCameraActivity extends PictureBaseActivity {
             }
         }
     };
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case UCropMulti.REQUEST_MULTI_CROP:
+                    multiCropHandleResult(data);
+                    break;
+                default:
+                    break;
+            }
+        } else if (resultCode == UCrop.RESULT_ERROR) {
+            Throwable throwable = (Throwable) data.getSerializableExtra(UCrop.EXTRA_ERROR);
+            ToastUtils.s(getContext(), throwable.getMessage());
+        }
+    }
 
     /**
      * @param actionType  操作类型

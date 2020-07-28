@@ -8,7 +8,6 @@ import android.support.annotation.IntRange;
 import android.support.annotation.StyleRes;
 import android.support.v4.app.Fragment;
 
-import com.eighteengray.procameralibrary.activity.ProCustomCameraActivity;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.config.PictureSelectionConfig;
@@ -18,6 +17,7 @@ import com.luck.picture.lib.style.PictureCropParameterStyle;
 import com.luck.picture.lib.style.PictureParameterStyle;
 import com.luck.picture.lib.style.PictureWindowAnimationStyle;
 import com.luck.picture.lib.tools.DoubleUtils;
+import com.xhdz.customcamera.activity.XhCustomSurfaceViewCameraActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -768,7 +768,8 @@ public class PictureSelectionModel {
             if (activity == null) {
                 return;
             }
-            Intent intent = new Intent(activity, ProCustomCameraActivity.class);
+//            Intent intent = new Intent(activity, ProCustomCameraActivity.class);// camera2
+            Intent intent = new Intent(activity, XhCustomSurfaceViewCameraActivity.class);// camera1
             Fragment fragment = selector.getFragment();
             if (fragment != null) {
                 fragment.startActivityForResult(intent, requestCode);

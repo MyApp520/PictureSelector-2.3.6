@@ -4,9 +4,9 @@
     <item>
         <shape android:shape="oval">
             <size
-                android:width="60dp"
-                android:height="60dp" />
-            <corners android:radius="30dp" />
+                android:width="@dimen/btn_capture_size"
+                android:height="@dimen/btn_capture_size" />
+            <corners android:radius="@dimen/btn_capture_half_size" />
             <solid android:color="#f1f1f1" />
         </shape>
     </item>
@@ -18,7 +18,7 @@
         android:top="8dp">
 
         <shape android:shape="oval">
-            <corners android:radius="20dp" />
+            <corners android:radius="@dimen/btn_capture_half_size" />
             <solid android:color="#cccccc" />
         </shape>
     </item>
