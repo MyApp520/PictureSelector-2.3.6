@@ -199,6 +199,7 @@ public class XhCustomSurfaceViewCameraActivity extends PictureBaseActivity {
         super.onDestroy();
         try {
             if (mCamera1Helper != null) {
+                mCamera1Helper.setCameraPictureCallback(null);
                 mCamera1Helper.release();
             }
         } catch (Exception e) {

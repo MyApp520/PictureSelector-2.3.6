@@ -39,6 +39,7 @@ android {
 
 dependencies {
     implementation project(':picture_library')
+
 //    api files('libs/picture_library-release.aar')
 //    api files('libs/ucrop-release.aar')
 

@@ -37,7 +37,7 @@ public class Camera1Helper {
     private int faceFrontCameraOrientation;
 
     /**
-     * 相机的方向（有：0，90，180，270），默认设置为：0
+     * 相机的方向（注意：必须是0，90，180，270中的一个），这里默认设置为：0
      */
     private int mDisplayOrientation = 0;
 
@@ -159,7 +159,7 @@ public class Camera1Helper {
         }
     }
 
-    public void stopPreview() {
+    private void stopPreview() {
         if (isCameraOpened()) {
             mCamera.cancelAutoFocus();
             mCamera.stopPreview();
