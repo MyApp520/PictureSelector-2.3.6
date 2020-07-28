@@ -22,6 +22,8 @@ import java.util.List;
 
 /**
  * 使用camera1 api完成相机功能
+ *
+ * https://github.com/KnightAndroid/Camera1Java 介绍了部分camera1的api，比较详细。
  */
 public class XhCustomSurfaceViewCameraActivity extends PictureBaseActivity {
 
