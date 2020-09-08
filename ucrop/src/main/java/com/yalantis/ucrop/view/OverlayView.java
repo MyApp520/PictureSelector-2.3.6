@@ -226,6 +226,8 @@ public class OverlayView extends View {
      */
     private void initCropBounds() {
         int height = (int) (mThisWidth / mTargetAspectRatio);
+        Log.e(TAG, "initCropBounds: mThisWidth = " + mThisWidth + ", mThisHeight = " + mThisHeight);
+        Log.e(TAG, "initCropBounds: mTargetAspectRatio = " + mTargetAspectRatio + ", height = " + height);
 
         // temp这个参数原先是没有的，是自己加的，目的是
         int temp = Math.min(mThisWidth, mThisHeight) / 4;//2020.07.15添加的
