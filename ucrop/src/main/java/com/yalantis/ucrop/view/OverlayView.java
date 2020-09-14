@@ -269,15 +269,13 @@ public class OverlayView extends View {
         if (mImageRectf.width() > mImageRectf.height()) {
             // 图片 宽 > 高
             tempLen = (int) (mImageRectf.height() / 4);
-            if (tempLen < 100) {
-                tempLen = 100;
-            }
         } else {
             // 图片 宽 <= 高
             tempLen = (int) (mImageRectf.width() / 4);
-            if (tempLen < 100) {
-                tempLen = 100;
-            }
+        }
+
+        if (tempLen < 100) {
+            tempLen = 100;
         }
 
         mCropViewRect.left = mImageRectf.left + tempLen;
