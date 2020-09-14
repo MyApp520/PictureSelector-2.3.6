@@ -38,10 +38,12 @@ android {
 }
 
 dependencies {
-    implementation project(':picture_library')
+//    implementation project(':picture_library')
 
-//    api files('libs/picture_library-release.aar')
-//    api files('libs/ucrop-release.aar')
+    api files('libs/picture_library-release.aar')
+    api files('libs/ucrop-release.aar')
+
+    implementation 'com.android.support.constraint:constraint-layout:2.0.1'
 
     //noinspection GradleCompatible
     implementation "com.android.support:appcompat-v7:${cfgs.version_appcompat}"
@@ -50,7 +52,6 @@ dependencies {
 
     implementation 'com.github.bumptech.glide:glide:4.7.1'
 
-    implementation 'com.android.support.constraint:constraint-layout:2.0.1'
     testImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.4'
     releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
