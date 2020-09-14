@@ -289,7 +289,7 @@ public class TransformImageView extends ImageView {
         float w = drawable.getIntrinsicWidth();
         float h = drawable.getIntrinsicHeight();
 
-        Log.d(TAG, String.format("Image size: [%d:%d]", (int) w, (int) h));
+        Log.e(TAG, String.format("Image size: [%d:%d]", (int) w, (int) h));
 
         RectF initialImageRect = new RectF(0, 0, w, h);
         mInitialImageCorners = RectUtils.getCornersFromRect(initialImageRect);

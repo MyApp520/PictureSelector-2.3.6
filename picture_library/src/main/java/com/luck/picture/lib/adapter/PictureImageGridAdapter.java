@@ -202,7 +202,8 @@ public class PictureImageGridAdapter extends RecyclerView.Adapter<RecyclerView.V
                     // 如原图路径不存在或者路径存在但文件不存在
                     String newPath = SdkVersionUtils.checkedAndroid_Q()
                             ? PictureFileUtils.getPath(context, Uri.parse(path)) : path;
-                    if (!new File(newPath).exists()) {
+                    File newPathFile = new File(newPath);
+                    if (newPathFile == null || !newPathFile.exists()) {
                         ToastUtils.s(context, PictureMimeType.s(context, mimeType));
                         return;
                     }

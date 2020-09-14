@@ -20,6 +20,7 @@ import android.view.View;
 import com.yalantis.ucrop.R;
 import com.yalantis.ucrop.callback.OverlayViewChangeListener;
 import com.yalantis.ucrop.util.RectUtils;
+import com.yalantis.ucrop.util.UIUtils;
 
 /**
  * Created by Oleksii Shliama (https://github.com/shliama).
@@ -40,6 +41,8 @@ public class OverlayView extends View {
     public static final int DEFAULT_CROP_GRID_COLUMN_COUNT = 2;
     private boolean mIsDragFrame = DEFAULT_DRAG_FRAME;
 
+    private Context mContext;
+
     /**
      * 裁剪框区域的大小
      */
@@ -48,7 +51,12 @@ public class OverlayView extends View {
     private final RectF mTempRect = new RectF();
 
     private int mCropGridRowCount, mCropGridColumnCount;
+
+    /**
+     * 原图的宽高比
+     */
     private float mTargetAspectRatio;
+
     private float[] mGridPoints = null;
     private boolean mShowCropFrame, mShowCropGrid;
     private boolean mCircleDimmedLayer;
@@ -60,6 +68,11 @@ public class OverlayView extends View {
     private Paint mCropFrameCornersPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
     protected int mThisWidth, mThisHeight;
+
+    /**
+     * 图片四个的点坐标包含的区域
+     */
+    private RectF mImageRectf;
 
     private boolean mIsFreestyleCropEnabled = DEFAULT_FREESTYLE_CROP_ENABLED;
     protected float[] mCropGridCorners;
@@ -90,6 +103,7 @@ public class OverlayView extends View {
 
     public OverlayView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        mContext = context;
         init();
     }
 
@@ -208,10 +222,17 @@ public class OverlayView extends View {
      * This method sets aspect ratio for crop bounds.
      *
      * @param targetAspectRatio - aspect ratio for image crop (e.g. 1.77(7) for 16:9)
+     * @param imageCropRect 图片当前的裁剪区域（最开始是整张图片的区域，也就是图片四个的点坐标包含的区域）
      */
-    public void setTargetAspectRatio(final float targetAspectRatio) {
+    public void setTargetAspectRatio(final float targetAspectRatio, final RectF imageCropRect) {
         mTargetAspectRatio = targetAspectRatio;
         if (mThisWidth > 0) {
+            if (mImageRectf == null) {
+                // 图片四个的点坐标包含的区域
+                mImageRectf = new RectF();
+                mImageRectf.set(imageCropRect.left, imageCropRect.top, imageCropRect.right, imageCropRect.bottom);
+                Log.e(TAG, "setTargetAspectRatio: mImageRectf = " + mImageRectf);
+            }
             initCropBounds();
             postInvalidate();
         } else {
@@ -220,18 +241,66 @@ public class OverlayView extends View {
     }
 
     /**
-     * 初始化裁剪框区域的大小
+     * 初始化裁剪框的大小
      * This method setups crop bounds rectangles for given aspect ratio and view size.
      * {@link #mCropViewRect} is used to draw crop bounds - uses padding.
      */
     private void initCropBounds() {
+
+        // 第一种方式初始化裁剪框
+        initCropViewRectf1();
+
+//        // 第二种方式初始化裁剪框
+//        initCropViewRectf2();
+
+        if (mOverlayViewChangeListener != null) {
+            mOverlayViewChangeListener.onCropRectUpdated(mCropViewRect);
+        }
+
+        updateGridPoints();
+    }
+
+    /**
+     * 第一种方式初始化裁剪框
+     */
+    private void initCropViewRectf1() {
+        int tempLen;
+
+        if (mImageRectf.width() > mImageRectf.height()) {
+            // 图片 宽 > 高
+            tempLen = (int) (mImageRectf.height() / 4);
+            if (tempLen < 100) {
+                tempLen = 100;
+            }
+        } else {
+            // 图片 宽 <= 高
+            tempLen = (int) (mImageRectf.width() / 4);
+            if (tempLen < 100) {
+                tempLen = 100;
+            }
+        }
+
+        mCropViewRect.left = mImageRectf.left + tempLen;
+        mCropViewRect.top = mImageRectf.top + tempLen;
+        mCropViewRect.right = mImageRectf.right - tempLen + UIUtils.dip2px(mContext, 28);//+28dp的目的是修正裁剪框右边间距明显大于左边的问题
+        mCropViewRect.bottom = mImageRectf.bottom - tempLen + UIUtils.dip2px(mContext, 28);
+
+        Log.e(TAG, "initCropViewRectf1: mImageRectf = " + mImageRectf + ", mCropViewRect = " + mCropViewRect);
+    }
+
+    /**
+     * 第二种方式初始化裁剪框
+     */
+    private void initCropViewRectf2() {
         int height = (int) (mThisWidth / mTargetAspectRatio);
-        Log.e(TAG, "initCropBounds: mThisWidth = " + mThisWidth + ", mThisHeight = " + mThisHeight);
+        Log.e(TAG, "initCropBounds: mThisWidth = " + mThisWidth + ", mThisHeight = " + mThisHeight
+                + ", 图片四个的点坐标包含的区域 mImageRectf = " + mImageRectf);
         Log.e(TAG, "initCropBounds: mTargetAspectRatio = " + mTargetAspectRatio + ", height = " + height);
 
         // temp这个参数原先是没有的，是自己加的，目的是
         int temp = Math.min(mThisWidth, mThisHeight) / 4;//2020.07.15添加的
-        Log.e(TAG, "initCropBounds temp这个参数原先是没有的: temp = " + temp);
+        Log.e(TAG, "initCropBounds temp这个参数原先是没有的: temp = " + temp
+                + ", paddingLeft = " + getPaddingLeft() + ", paddingTop = " + getPaddingTop());
 
         if (height > mThisHeight) {
             int width = (int) (mThisHeight * mTargetAspectRatio);
@@ -239,18 +308,23 @@ public class OverlayView extends View {
 
             mCropViewRect.set(getPaddingLeft() + halfDiff + temp, getPaddingTop() + temp,
                     getPaddingLeft() + width + halfDiff - temp, getPaddingTop() + mThisHeight - temp);
+
+            Log.e(TAG, "initCropBounds: height > mThisHeight = " + mCropViewRect);
         } else {
             int halfDiff = (mThisHeight - height) / 2;
 
             mCropViewRect.set(getPaddingLeft() + temp, getPaddingTop() + halfDiff + temp,
                     getPaddingLeft() - temp + mThisWidth, getPaddingTop() + height + halfDiff - temp);
-        }
 
-        if (mOverlayViewChangeListener != null) {
-            mOverlayViewChangeListener.onCropRectUpdated(mCropViewRect);
-        }
+            Log.e(TAG, "initCropBounds: height <= mThisHeight = " + mCropViewRect);
 
-        updateGridPoints();
+            if (mCropViewRect.bottom - mCropViewRect.top <= 0) {
+                // 修正裁剪框大小，否则裁剪框不可操作，可以注释这段代码试试效果
+                mCropViewRect.top = mCropViewRect.top - height / 3.0f;
+                mCropViewRect.bottom = mCropViewRect.top + height / 3.0f;
+                Log.e(TAG, "initCropBounds: height <= mThisHeight 修改后 = " + mCropViewRect);
+            }
+        }
     }
 
     private void updateGridPoints() {
@@ -283,7 +357,7 @@ public class OverlayView extends View {
 
             if (mShouldSetupCropBounds) {
                 mShouldSetupCropBounds = false;
-                setTargetAspectRatio(mTargetAspectRatio);
+                setTargetAspectRatio(mTargetAspectRatio, null);
             }
         }
     }

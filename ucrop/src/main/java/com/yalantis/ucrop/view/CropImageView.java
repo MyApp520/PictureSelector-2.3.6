@@ -10,6 +10,7 @@ import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 
 import com.yalantis.ucrop.R;
 import com.yalantis.ucrop.callback.BitmapCropCallback;
@@ -31,12 +32,17 @@ import java.util.Arrays;
  */
 public class CropImageView extends TransformImageView {
 
+    private final String TAG = CropImageView.class.getSimpleName();
+
     public static final int DEFAULT_MAX_BITMAP_SIZE = 0;
     public static final int DEFAULT_IMAGE_TO_CROP_BOUNDS_ANIM_DURATION = 500;
     public static final float DEFAULT_MAX_SCALE_MULTIPLIER = 10.0f;
     public static final float SOURCE_IMAGE_ASPECT_RATIO = 0f;
     public static final float DEFAULT_ASPECT_RATIO = SOURCE_IMAGE_ASPECT_RATIO;
 
+    /**
+     * 当前裁剪框四个点的坐标（即：裁剪框包含的图片裁剪区域，初始化时，被设置为整张图片的区域）
+     */
     private final RectF mCropRect = new RectF();
 
     private final Matrix mTempMatrix = new Matrix();
@@ -116,6 +122,7 @@ public class CropImageView extends TransformImageView {
         mTargetAspectRatio = cropRect.width() / cropRect.height();
         mCropRect.set(cropRect.left - getPaddingLeft(), cropRect.top - getPaddingTop(),
                 cropRect.right - getPaddingRight(), cropRect.bottom - getPaddingBottom());
+        Log.e(TAG, "setCropRect: 当前裁剪框四个点的坐标 mCropRect = " + mCropRect + ", mTargetAspectRatio = " + mTargetAspectRatio);
         calculateImageScaleBounds();
         setImageToWrapCropBounds();
     }
@@ -141,7 +148,7 @@ public class CropImageView extends TransformImageView {
         }
 
         if (mCropBoundsChangeListener != null) {
-            mCropBoundsChangeListener.onCropAspectRatioChanged(mTargetAspectRatio);
+            mCropBoundsChangeListener.onCropAspectRatioChanged(mTargetAspectRatio, mCropRect);
         }
     }
 
@@ -377,7 +384,12 @@ public class CropImageView extends TransformImageView {
             mTargetAspectRatio = drawableWidth / drawableHeight;
         }
 
+        Log.e(TAG, "onImageLaidOut: drawableWidth = " + drawableWidth + ", drawableHeight = " + drawableHeight
+                + ", mTargetAspectRatio = " + mTargetAspectRatio);
+
         int height = (int) (mThisWidth / mTargetAspectRatio);
+        Log.e(TAG, "onImageLaidOut: mThisWidth = " + mThisWidth + ", mThisHeight = " + mThisHeight + ", height = " + height);
+
         if (height > mThisHeight) {
             int width = (int) (mThisHeight * mTargetAspectRatio);
             int halfDiff = (mThisWidth - width) / 2;
@@ -387,11 +399,15 @@ public class CropImageView extends TransformImageView {
             mCropRect.set(0, halfDiff, mThisWidth, height + halfDiff);
         }
 
+        // mCropRect：当前裁剪框四个点的坐标（即：裁剪框包含的图片裁剪区域，初始化时，被设置为整张图片的区域）
+        Log.e(TAG, "onImageLaidOut: 图片四个的点坐标包含的区域 mCropRect = " + mCropRect);
+
         calculateImageScaleBounds(drawableWidth, drawableHeight);
+        // 计算初始图像位置，以便正确定位。
         setupInitialImagePosition(drawableWidth, drawableHeight);
 
         if (mCropBoundsChangeListener != null) {
-            mCropBoundsChangeListener.onCropAspectRatioChanged(mTargetAspectRatio);
+            mCropBoundsChangeListener.onCropAspectRatioChanged(mTargetAspectRatio, mCropRect);
         }
         if (mTransformImageListener != null) {
             mTransformImageListener.onScale(getCurrentScale());
@@ -469,6 +485,7 @@ public class CropImageView extends TransformImageView {
     }
 
     /**
+     * 此方法计算初始图像位置，以便正确定位。
      * This method calculates initial image position so it is positioned properly.
      * Then it sets those values to the current image matrix.
      *
